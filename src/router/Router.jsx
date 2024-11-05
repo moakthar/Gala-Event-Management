@@ -19,7 +19,6 @@ import EmailSend from "../pages/auth/forgot/EmailSend";
 import ResetPassword from "../pages/auth/forgot/ResetPassword";
 import Profile from "../pages/dashboard/profile/Profile";
 import SecretPage from "./SecretPage";
-import PaymentOptions from "../pages/customEvent/Payment";
 
 const Router = createBrowserRouter([
   {
