@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { CiPlay1 } from "react-icons/ci";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useGetUserToken } from "../../components/customHook/customHook";
 
 const VAT_RATE = 0.2;
 
@@ -10,10 +12,13 @@ const CustomEvent = () => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [guestCount, setGuestCount] = useState("");
+  const [totalCost, setTotalCost] = useState("");
+
   const [specialRequest, setSpecialRequest] = useState("");
   const [showPaymentSection, setShowPaymentSection] = useState(false);
-  const [totalCost, setTotalCost] = useState(0);
+
   const navigate = useNavigate();
+  
   const [card_name, setName] = useState("");
   const [card_number, setCardNumber] = useState("");
   const [expiry_month, setExpiryMonth] = useState("");
@@ -21,6 +26,29 @@ const CustomEvent = () => {
   const [cvv, setCvv] = useState("");
   const [errors, setErrors] = useState({});
 
+  const [price, setprice] = useState([]);
+
+  const token = useGetUserToken();
+
+
+  const getPrice = async () => {
+    try {
+      const res = await axios.get(
+        "https://winngoogala.winngooconsultancy.in/api/prices",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setprice(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getPrice();
+  },[]);
+
+  // console.log(price)
   const validateForm = () => {
     const newErrors = {};
     setErrors(newErrors);
@@ -81,10 +109,11 @@ const CustomEvent = () => {
 
   useEffect(() => {
     let cost = 0;
-    if (guestCount === "1-10") cost = 2; // Assuming a cost per guest for 1-10
-    else if (guestCount === "1-20") cost = 3; // Assuming a cost per guest for 1-20
+    if (guestCount === "1-10") cost = price[0].price; // Assuming a cost per guest for 1-10
+    else if (guestCount === "1-20") cost = price[1].price; // Assuming a cost per guest for 1-20
     const vat = cost * VAT_RATE;
-    setTotalCost(cost + vat);
+    // console.log(cost,vat)
+    setTotalCost(parseInt(cost) + (vat));
   }, [guestCount]);
 
   const isValidDateTime = (selectedDate, selectedTime) => {
@@ -134,8 +163,7 @@ const CustomEvent = () => {
           backgroundSize: "cover",
           borderRadius: "6px",
           height: 200,
-        }}
-      >
+        }}>
         <div className="h-[200px] bg-black bg-opacity-70 flex items-center justify-start p-8">
           <div>
             <h1 className="text-5xl text-white font-bold">Create Your Event</h1>
@@ -167,8 +195,7 @@ const CustomEvent = () => {
                         required
                         value={eventType}
                         onChange={(e) => setEventType(e.target.value)}
-                        className="w-full border rounded-md p-2"
-                      >
+                        className="w-full border rounded-md p-2">
                         <option value="" disabled>
                           Select event type
                         </option>
@@ -210,8 +237,7 @@ const CustomEvent = () => {
                         required
                         value={guestCount}
                         onChange={(e) => setGuestCount(e.target.value)}
-                        className="w-full border rounded-md p-2"
-                      >
+                        className="w-full border rounded-md p-2">
                         <option value="">Select guests count</option>
                         <option value="1-10">1-10</option>
                         <option value="1-20">1-20</option>
@@ -234,8 +260,7 @@ const CustomEvent = () => {
 
                   <button
                     onClick={handleNext}
-                    className="mt-6 bg-indigo-600 text-white px-4 py-2 rounded-md"
-                  >
+                    className="mt-6 bg-indigo-600 text-white px-4 py-2 rounded-md">
                     Next
                   </button>
                 </div>
@@ -250,7 +275,8 @@ const CustomEvent = () => {
                   <p>Guests: {guestCount || "N/A"}</p>
                   <p>
                     Total Cost:{" "}
-                    {totalCost > 0 ? `£${totalCost.toFixed(2)}` : "N/A"}
+                    {/* {totalCost > 0 ? `£${totalCost.toFixed(2)}` : "N/A"} */}
+                    {`£ ${totalCost}`}
                   </p>
                 </div>
               </div>
@@ -294,14 +320,12 @@ const CustomEvent = () => {
                     required
                     value={expiry_month}
                     onChange={handleExpiryMonthChange}
-                    className="w-full border rounded-md p-2"
-                  >
+                    className="w-full border rounded-md p-2">
                     <option value="">Select Expiry Month</option>
                     {Array.from({ length: 12 }, (_, i) => (
                       <option
                         key={i + 1}
-                        value={(i + 1).toString().padStart(2, "0")}
-                      >
+                        value={(i + 1).toString().padStart(2, "0")}>
                         {(i + 1).toString().padStart(2, "0")}
                       </option>
                     ))}
@@ -321,8 +345,7 @@ const CustomEvent = () => {
                     required
                     value={expiry_year}
                     onChange={handleExpiryYearChange}
-                    className="w-full border rounded-md p-2"
-                  >
+                    className="w-full border rounded-md p-2">
                     <option value="">Select Expiry Year</option>
                     {Array.from({ length: 10 }, (_, i) => {
                       const year = new Date().getFullYear() + i;
@@ -359,8 +382,7 @@ const CustomEvent = () => {
 
               <button
                 type="submit"
-                className="mt-6 bg-indigo-600 text-white px-4 py-2 rounded-md"
-              >
+                className="mt-6 bg-indigo-600 text-white px-4 py-2 rounded-md">
                 Pay Now
               </button>
             </form>

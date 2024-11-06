@@ -84,7 +84,7 @@ const RequestOrganizer = () => {
             </div>
             <div>
               <label className="block text-gray-700 font-semibold mb-1">
-                Company Name
+                Company Name (Optional)
               </label>
               <input
                 type="text"
@@ -100,7 +100,7 @@ const RequestOrganizer = () => {
               <label
                 htmlFor="experience"
                 className="block text-gray-700 font-semibold mb-1">
-                Event Organization Experience
+                Request Purpose
               </label>
               <textarea
                 {...register("experience", { required: true })}
@@ -110,7 +110,7 @@ const RequestOrganizer = () => {
                 <span className="text-red-500">Experience is required</span>
               )}
             </div>
-            <div>
+            {/* <div>
               <label className="block text-gray-700 font-semibold mb-1">
                 Event Organization Skills
               </label>
@@ -121,7 +121,7 @@ const RequestOrganizer = () => {
               {errors.skills && (
                 <span className="text-red-500">Skills are required</span>
               )}
-            </div>
+            </div> */}
             <div className="mt-4 flex justify-center">
               <button className="bg-primary px-4 py-2 rounded-md text-white uppercase">
                 Submit Request

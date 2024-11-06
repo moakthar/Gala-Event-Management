@@ -40,7 +40,7 @@ const Organizer = () => {
             </p>
             <Link to="request-organizer">
               <button className="bg-primary px-6 py-3 rounded-md text-white uppercase">
-                Contact Us
+                Request Us
               </button>
             </Link>
           </div>

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 import { CiLocationOn } from "react-icons/ci";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Container from "../../../components/container/Container";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { IoTicket } from "react-icons/io5";
@@ -11,8 +11,11 @@ import customimg from "../../home/magicBanner/image/img3.png";
 import hostimg from "../../home/magicBanner/image/img5.png";
 import AOS from "aos"; // Import AOS
 import "aos/dist/aos.css"; // Import AOS styles
+import { useCookies } from "react-cookie";
 
 const AllServices = () => {
+  const [cookies, setCookie] = useCookies(["access_token"]);
+  const nav = useNavigate();
   useEffect(() => {
     AOS.init({
       duration: 1000, // Animation duration in milliseconds
@@ -29,6 +32,14 @@ const AllServices = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const handlePlanPersonal = () => {
+    if (cookies.access_token) {
+      nav("/create-your-event");
+    } else {
+      nav("/login");
+    }
+  };
 
   return (
     <Container>
@@ -69,13 +80,14 @@ const AllServices = () => {
               personalized event management that brings your vision to life.
             </p>
             <div className="flex justify-center">
-              <Link to="/create-your-event">
-                <button
-                  type="button"
-                  className="text-white bg-gradient-to-r from-violet-400 via-violet-500 to-violet-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 shadow-lg shadow-pink-500/50 dark:shadow-lg dark:shadow-pink-800/80 font-medium rounded-lg lg:text-lg px-5 py-2.5 text-center me-2 mb-2">
-                  Plan Personal Celebration
-                </button>
-              </Link>
+              {/* <Link to="/create-your-event"> */}
+              <button
+                type="button"
+                onClick={handlePlanPersonal}
+                className="text-white bg-gradient-to-r from-violet-400 via-violet-500 to-violet-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 shadow-lg shadow-pink-500/50 dark:shadow-lg dark:shadow-pink-800/80 font-medium rounded-lg lg:text-lg px-5 py-2.5 text-center me-2 mb-2">
+                Plan Personal Celebration
+              </button>
+              {/* </Link> */}
             </div>
           </div>
         </div>
